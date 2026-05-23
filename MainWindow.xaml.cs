@@ -117,9 +117,9 @@ namespace VRCTextboxOSC
         {
             Dispatcher.Invoke(() =>
             {
-                oscSender.Send(new OscMessage("/chatbox/typing", false));
+                oscSender.Send(new OscMessageWithUTF8Strings("/chatbox/typing", false));
                 typingIndicatorActive = false;
-                oscSender.Send(new OscMessage("/chatbox/input", TbxMain.Text, true, notif || isFirstMessage));
+                oscSender.Send(new OscMessageWithUTF8Strings("/chatbox/input", TbxMain.Text, true, notif || isFirstMessage));
                 isFirstMessage = false;
                 intervalTimer.Stop();
             });
@@ -128,8 +128,8 @@ namespace VRCTextboxOSC
         private void ClearMessage()
         {
             TbxMain.Clear();
-            oscSender.Send(new OscMessage("/chatbox/input", String.Empty, true));
-            oscSender.Send(new OscMessage("/chatbox/typing", false));
+            oscSender.Send(new OscMessageWithUTF8Strings("/chatbox/input", String.Empty, true));
+            oscSender.Send(new OscMessageWithUTF8Strings("/chatbox/typing", false));
             typingIndicatorActive = false;
             intervalTimer.Stop();
             TbxMain.Focus();
@@ -159,7 +159,7 @@ namespace VRCTextboxOSC
             else
             {
                 if (!typingIndicatorActive)
-                    oscSender.Send(new OscMessage("/chatbox/typing", true));
+                    oscSender.Send(new OscMessageWithUTF8Strings("/chatbox/typing", true));
 
                 typingIndicatorActive = true;
 
