@@ -11,6 +11,7 @@ using Valve.VR;
 using NHotkey;
 using NHotkey.Wpf;  // hotkey window focusing feature. thanks to 753 ( https://753.network/ ) for sharing this trick :)
 using System.IO;
+using System.Text;
 
 namespace VRCTextboxOSC
 {
@@ -24,6 +25,7 @@ namespace VRCTextboxOSC
 
         private bool isEnabled;
         private bool isFirstMessage;
+        private bool typingIndicatorActive;
 
         private readonly string CONFIGPATH = "config.ini";
 
@@ -116,6 +118,7 @@ namespace VRCTextboxOSC
             Dispatcher.Invoke(() =>
             {
                 oscSender.Send(new OscMessage("/chatbox/typing", false));
+                typingIndicatorActive = false;
                 oscSender.Send(new OscMessage("/chatbox/input", TbxMain.Text, true, notif || isFirstMessage));
                 isFirstMessage = false;
                 intervalTimer.Stop();
@@ -127,6 +130,7 @@ namespace VRCTextboxOSC
             TbxMain.Clear();
             oscSender.Send(new OscMessage("/chatbox/input", String.Empty, true));
             oscSender.Send(new OscMessage("/chatbox/typing", false));
+            typingIndicatorActive = false;
             intervalTimer.Stop();
             TbxMain.Focus();
         }
@@ -154,7 +158,11 @@ namespace VRCTextboxOSC
             }
             else
             {
-                oscSender.Send(new OscMessage("/chatbox/typing", true));
+                if (!typingIndicatorActive)
+                    oscSender.Send(new OscMessage("/chatbox/typing", true));
+
+                typingIndicatorActive = true;
+
 
                 if (CbxModes.SelectedIndex == 0)
                     intervalTimer.Start();
